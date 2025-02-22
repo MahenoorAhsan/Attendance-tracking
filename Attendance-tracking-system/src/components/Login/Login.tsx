@@ -13,6 +13,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import styles from './Login.module.css'
+import { useEffect } from "react"
+import { useNavigate } from 'react-router-dom';
+import { RoutePaths } from '../../providers/Router';
+import { getImageUrl } from "../../providers/utils"
 
 // 1. Define schema outside component
 const loginForm = z.object({
@@ -24,7 +28,8 @@ const loginForm = z.object({
   })
 })
 
-export default function Login() {
+export const Login = (()=> {
+  const navigate = useNavigate();
   // 2. Initialize form INSIDE the component
   const form = useForm({
     resolver: zodResolver(loginForm),
@@ -35,16 +40,27 @@ export default function Login() {
   })
 
   // 3. Move onSubmit inside component
-  function onSubmit(values: z.infer<typeof loginForm>) {
-    console.log(values)
-  }
+  useEffect(() => {
+    if (localStorage.getItem('authToken')) {
+      navigate(RoutePaths.DASHBOARD);
+    }
+  }, [navigate]);
+
+  const onSubmit = (values: z.infer<typeof loginForm>) => {
+    // Your authentication logic here
+    console.log('Login values:', values);
+    
+    // Mock login success
+    localStorage.setItem('authToken', 'dummy-token');
+    navigate(RoutePaths.DASHBOARD);
+  };
 
   return (
     <div className='min-h-screen flex items-center justify-center p-4 flex-col bg-blue-100'>
       <div className="card shadow-xl p-20 bg-white">
         <h2 className="text-6xl text-center ">RollCallPro</h2>
         <h6>Fastest AI-Enabled Attendance Tracker</h6>
-        <img src="../../assets/logo.png" className="m-3 justify-center h-10" alt="Login visual" />
+        <img src ="getImageUrl('logo.png')}" className="m-3 justify-center h-10" alt="Login visual" />
     
      
       <Form {...form}>
@@ -56,7 +72,7 @@ export default function Login() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="username" {...field} />
               </FormControl>
               {/* <FormDescription>
                 This is your public display name.
@@ -72,7 +88,7 @@ export default function Login() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="password" {...field} />
               </FormControl>
               {/* <FormDescription>
                 This is your public display name.
@@ -87,4 +103,4 @@ export default function Login() {
       </div>
     </div>
   )
-}
+})
