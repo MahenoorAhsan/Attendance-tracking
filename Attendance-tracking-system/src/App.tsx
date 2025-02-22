@@ -1,18 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import styles from './App.css'
-import {Login} from './components/Login/Login'
-import React from 'react'
+import { useRef } from 'react'; // Add this if missing
+import { useForm } from 'react-hook-form'; // Assuming you're using react-hook-form
+import Login from './components/Login/Login'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
    <div>
-    <Login></Login>
+      <Login></Login>
    </div>
   )
+  
 }
 
 export default App
