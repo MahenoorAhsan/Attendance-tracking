@@ -17,6 +17,8 @@ import { useEffect } from "react"
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../providers/Router';
 import { getImageUrl } from "../../providers/utils"
+import logo from '../../assets/logo.png';
+
 
 // 1. Define schema outside component
 const loginForm = z.object({
@@ -57,14 +59,17 @@ export const Login = (()=> {
 
   return (
     <div className='min-h-screen flex items-center justify-center p-4 flex-col bg-blue-100'>
-      <div className="card shadow-xl p-20 bg-white">
-        <h2 className="text-6xl text-center ">RollCallPro</h2>
-        <h6>Fastest AI-Enabled Attendance Tracker</h6>
-        <img src ="getImageUrl('logo.png')}" className="m-3 justify-center h-10" alt="Login visual" />
+      <div className="card shadow-xl p-20 bg-white rounded-3xl">
+        <div className="flex justify-center  align-middle">
+          <img src = {logo} className="m-3  h-12" alt="Login visual" />
+          <h2 className="text-6xl text-center ">RollCallPro</h2>
+        </div>
+        {/* <h6>Fastest AI-Enabled Attendance Tracker</h6> */}
+        
     
      
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-5">
         <FormField
           control={form.control}
           name="username"

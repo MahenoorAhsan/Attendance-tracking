@@ -1,9 +1,12 @@
 // src/app/Router.tsx
-import { BrowserRouter, RouterProvider ,Navigate, createBrowserRouter} from 'react-router-dom';
+import { BrowserRouter, RouterProvider ,Navigate, createBrowserRouter, Outlet} from 'react-router-dom';
 import { Dashboard } from '../components/Dashboard/Dashboard';
 import { Attendance } from '../components/Attendance/Attendance';
 import { Login } from '../components/Login/Login';
 import { Layout } from '../components/Layout/Layout';
+import { Students } from '@/components/Students/Students';
+import { Staffs } from '@/components/Staffs/Staffs';
+
 //import { PrivateRoute } from '../components/PrivateRoute';
 import React from 'react';
 
@@ -12,6 +15,8 @@ export enum RoutePaths {
   LOGIN = '/login',
   DASHBOARD = '/dashboard',
   ATTENDANCE = '/attendance',
+  STUDENTS ='/students',
+  STAFFS ='STAFFS'
 }
 const AuthRedirect = () => {
     const isAuthenticated = !!localStorage.getItem('authToken');
@@ -19,8 +24,23 @@ const AuthRedirect = () => {
       <Navigate to={RoutePaths.DASHBOARD} replace />
     ) : (
       <Navigate to={RoutePaths.LOGIN} replace />
-    );
+    ) 
   };
+const PrivateRouteWrapper = () => {
+  const isAuthenticated = checkAuth();
+  return isAuthenticated ? <Outlet /> : <Navigate to={RoutePaths.LOGIN} replace />;
+};
+
+// Public route wrapper (for login page)
+const PublicRoute = ({ element }: { element: React.ReactElement }) => {
+  const isAuthenticated = checkAuth();
+  return isAuthenticated ? <Navigate to={RoutePaths.DASHBOARD} replace /> : element;
+};
+
+// Authentication check function (modify according to your auth system)
+const checkAuth = () => {
+  return !!localStorage.getItem('authToken');
+};
   
 const router = createBrowserRouter([
   {
@@ -29,31 +49,34 @@ const router = createBrowserRouter([
   },
   {
     path: RoutePaths.LOGIN,
-    element: <Login />,
+    element: <PublicRoute element={<Login />} />,
   },
   {
-    element: <Layout />,
+    element: <PrivateRouteWrapper />,
     children: [
       {
-        path: RoutePaths.DASHBOARD,
-        // element: <PrivateRoute element={<Dashboard />} />,
-        element: <Dashboard />
-      },
-      {
-        path: RoutePaths.ATTENDANCE,
-        // element: <PrivateRoute element={<Attendance />} />,
-        element: <Attendance />,
+        element: <Layout />,
+        children: [
+          {
+            path: RoutePaths.DASHBOARD,
+            element: <Dashboard />,
+          },
+          {
+            path: RoutePaths.STUDENTS,
+            element: <Students />,
+          },
+          {
+            path: RoutePaths.STAFFS,
+            element: <Staffs />,
+          },
+          {
+            path: RoutePaths.ATTENDANCE,
+            element: <Attendance />,
+          },
+        ],
       },
     ],
   },
-//   {
-//     path: RoutePaths.LOGIN,
-//     element: <Login />,
-//   },
-//   {
-//     path: RoutePaths.DASHBOARD,
-//     element: <Dashboard />
-//   },
 ]);
 
 // Auth redirect component for root path
