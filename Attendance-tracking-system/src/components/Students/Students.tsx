@@ -66,7 +66,7 @@ export const Students = (()=>{
         <div className="px-4 py-3">
         <div className="justify-between flex">
             <div>
-                <div className="bg-white h-20 rounded-xl text-xl align-middle">Students List</div>
+                <div className="bg-gray-200  rounded-xl text-xl px-3 py-2">Students List</div>
                 <input type="dropdown"></input>
             </div>
             <div className="flex gap-4">
