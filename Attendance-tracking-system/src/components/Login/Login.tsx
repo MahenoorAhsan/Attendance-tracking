@@ -15,14 +15,16 @@ import { Input } from "@/components/ui/input"
 import styles from './Login.module.css'
 import { useEffect } from "react"
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import { RoutePaths } from '../../providers/Router';
 import { getImageUrl } from "../../providers/utils"
 import logo from '../../assets/logo.png';
+import { toast } from "sonner";
 
 
 // 1. Define schema outside component
 const loginForm = z.object({
-  username: z.string().min(1, {
+  email: z.string().min(1, {
     message: "Username is required",
   }),
   password: z.string().min(8, {
@@ -36,26 +38,69 @@ export const Login = (()=> {
   const form = useForm({
     resolver: zodResolver(loginForm),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   })
 
-  // 3. Move onSubmit inside component
-  useEffect(() => {
-    if (localStorage.getItem('authToken')) {
-      navigate(RoutePaths.DASHBOARD);
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const token = Cookies.get('access_token');  // Read the cookie
+  //   console.log('Cookie Token:', token);
+  //   if (token) {
+  //     navigate(RoutePaths.DASHBOARD);  // Replace with RoutePaths.DASHBOARD if needed
+  //   }
+  // },[]);
 
-  const onSubmit = (values: z.infer<typeof loginForm>) => {
-    // Your authentication logic here
-    console.log('Login values:', values);
+  const onSubmit = async (values: z.infer<typeof loginForm>) => {
     
-    // Mock login success
-    localStorage.setItem('authToken', 'dummy-token');
-    navigate(RoutePaths.DASHBOARD);
-  };
+    try {
+      console.log(values);
+      const response = await fetch(`/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body : JSON.stringify(values),
+        credentials: 'include'  
+      });
+      console.log(response);
+      if (!response.ok){
+        throw new Error('Failed to submit');
+      } 
+      const result = await response.json();
+      setTimeout(() => navigate(RoutePaths.DASHBOARD), 100);  
+      console.log('Success:', result);
+      toast.success(result)
+    } catch (error) {
+      console.error('Error:', error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('An unknown error occurred');
+      }
+    
+  }
+}
+
+  // const onSubmit = async () => {
+  //  // e.preventDefault();
+  //   console.log(JSON.stringify(loginForm))
+  //   try {
+  //     const response = await fetch(`${BACKEND_URL}/auth/login`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(loginForm),
+  //     });
+
+  //     if (!response.ok) throw new Error('Failed to submit');
+  //     const result = await response.json();
+  //     console.log('Success:', result);
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
+  // };
 
   return (
     <div className='min-h-screen flex items-center justify-center p-4 flex-col bg-blue-100'>
@@ -72,12 +117,12 @@ export const Login = (()=> {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-5">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="username" {...field} />
+                <Input placeholder="email" {...field} type="email"/>
               </FormControl>
               {/* <FormDescription>
                 This is your public display name.
@@ -93,7 +138,7 @@ export const Login = (()=> {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} />
+                <Input placeholder="password" {...field} type="password" />
               </FormControl>
               {/* <FormDescription>
                 This is your public display name.

@@ -9,6 +9,7 @@ import { Staffs } from '@/components/Staffs/Staffs';
 
 //import { PrivateRoute } from '../components/PrivateRoute';
 import React from 'react';
+import Cookies from 'js-cookie';
 
 export enum RoutePaths {
   ROOT = '/',
@@ -16,7 +17,7 @@ export enum RoutePaths {
   DASHBOARD = '/dashboard',
   ATTENDANCE = '/attendance',
   STUDENTS ='/students',
-  STAFFS ='STAFFS'
+  STAFFS ='/staffs'
 }
 const AuthRedirect = () => {
     const isAuthenticated = !!localStorage.getItem('authToken');
@@ -28,18 +29,19 @@ const AuthRedirect = () => {
   };
 const PrivateRouteWrapper = () => {
   const isAuthenticated = checkAuth();
-  return isAuthenticated ? <Outlet /> : <Navigate to={RoutePaths.LOGIN} replace />;
+  return isAuthenticated ? <Outlet /> : <Navigate to={RoutePaths.DASHBOARD} replace />;
 };
 
 // Public route wrapper (for login page)
 const PublicRoute = ({ element }: { element: React.ReactElement }) => {
-  const isAuthenticated = checkAuth();
-  return isAuthenticated ? <Navigate to={RoutePaths.DASHBOARD} replace /> : element;
+  // const isAuthenticated = checkAuth();
+  // return isAuthenticated ? <Navigate to={RoutePaths.LOGIN} replace /> : element;
+  return element;
 };
 
 // Authentication check function (modify according to your auth system)
 const checkAuth = () => {
-  return !!localStorage.getItem('authToken');
+  return !Cookies.get('access_token');
 };
   
 const router = createBrowserRouter([

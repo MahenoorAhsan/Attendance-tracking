@@ -1,7 +1,11 @@
 
-import { Link, useLocation,Outlet } from 'react-router-dom';
+import { Link, useLocation,Outlet, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../providers/Router';
 import logo from '../../assets/logo.png'
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { Toaster } from "@/components/ui/sonner";
+
 
 
 export const Layout = () => {
@@ -13,6 +17,22 @@ export const Layout = () => {
     { path: RoutePaths.STUDENTS, label: 'Students' },
     { path: RoutePaths.STAFFS , label: 'Staffs'}
   ];
+
+
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      await axios.post('api/auth/logout', { withCredentials: true });
+      localStorage.clear();
+      sessionStorage.clear();
+      Cookies.remove('access_token');
+      navigate(RoutePaths.LOGIN);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
 
   return (
     <div>
@@ -36,6 +56,7 @@ export const Layout = () => {
             {link.label}
           </Link>
         ))}
+        <button className='px-3 py-2 rounded-md hover:bg-blue-100' onClick={logout} >Logout </button>
       </nav>
       </div>
     
