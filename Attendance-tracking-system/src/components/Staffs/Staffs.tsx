@@ -72,6 +72,7 @@ export const Staffs = (()=>{
                  <TableHead>Govt_id</TableHead>
                  <TableHead>Govt_id Type</TableHead>
                  <TableHead>Profile Image</TableHead>
+               
                </TableRow>
              </TableHeader>
              <TableBody>
@@ -83,6 +84,7 @@ export const Staffs = (()=>{
                    <TableCell>{staff.govt_id.id_number}</TableCell>
                    <TableCell>{staff.govt_id.id_type}</TableCell>
                    <TableCell>{staff.profile_image}</TableCell>
+                 
                  
                  </TableRow>
                ))}
